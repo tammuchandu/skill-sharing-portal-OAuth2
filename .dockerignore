@@ -1,0 +1,10 @@
+target
+*.log
+*.tmp
+*.bak
+**/node_modules
+**/.git
+**/.gitignore
+**/.mvn
+Dockerfile
+docker-compose.yml
