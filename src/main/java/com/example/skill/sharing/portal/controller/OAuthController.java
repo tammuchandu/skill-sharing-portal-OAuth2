@@ -32,11 +32,11 @@ public class OAuthController {
 
         // GET GOOGLE USER
         OAuth2User oauthUser =
-                (OAuth2User) authentication.getPrincipal();
+                (OAuth2User) authentication.getPrincipal();// get object of type OAuth2User from authentication principal
 
         // PROCESS USER
         SkillsPeople dbUser =
-                userService.processOAuthUser(oauthUser);
+                userService.processOAuthUser(oauthUser);// processOAuthUser method in userService to handle user data and return a SkillsPeople object representing the user in the database
 
         // STORE FULL USER OBJECT
         session.setAttribute(
@@ -54,7 +54,7 @@ public class OAuthController {
                 dbUser.getEmail());
 
         // CHECK LOGIN TYPE
-        if ("GOOGLE".equals(dbUser.getProvider())) {
+        if ("GOOGLE".equals(dbUser.getProvider())) {//true → Google OAuth login
 
             // GOOGLE LOGIN
             session.setAttribute(
@@ -64,7 +64,7 @@ public class OAuthController {
         } else {
 
             // NORMAL LOGIN
-            session.setAttribute(
+            session.setAttribute(// if false Google, store username as userId
                     "userId",
                     dbUser.getUsername());
         }
