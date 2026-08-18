@@ -28,6 +28,12 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: Tchandu@543
       PORT: 8080  # For Render, optional if Render sets PORT automatically
+
+         # ===============================
+      # Google OAuth2
+      # ===============================
+      GOOGLE_CLIENT_ID:${ YOUR_GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${YOUR_GOOGLE_CLIENT_SECRET}
     depends_on:
       mysql:
         condition: service_healthy
