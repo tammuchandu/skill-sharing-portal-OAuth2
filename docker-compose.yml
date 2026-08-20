@@ -1,52 +1,50 @@
-spring.application.name=skill-sharing-portal
+version: "3.9"
 
-# ===============================
-# PostgreSQL Database
-# ===============================
-spring.datasource.url=${SPRING_DATASOURCE_URL}
-spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
-spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
-spring.datasource.driver-class-name=org.postgresql.Driver
+services:
 
-# ===============================
-# Hibernate / JPA
-# ===============================
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+  mysql:
+    image: mysql:8.0
+    container_name: bootmvc_mysql
+    ports:
+      - "3307:3306"
 
-# ===============================
-# Server
-# ===============================
-server.port=${PORT:8080}
+    environment:
+      MYSQL_ROOT_PASSWORD: Tchandu@543
+      MYSQL_DATABASE: mydb
 
-# ===============================
-# FILE UPLOAD
-# ===============================
-spring.servlet.multipart.enabled=true
-spring.servlet.multipart.max-file-size=100MB
-spring.servlet.multipart.max-request-size=100MB
+    volumes:
+      - mysql-data:/var/lib/mysql
 
-# ===============================
-# JSP
-# ===============================
-spring.mvc.view.prefix=/WEB-INF/pages/
-spring.mvc.view.suffix=.jsp
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# ===============================
-# STATIC RESOURCES
-# ===============================
-spring.web.resources.static-locations=classpath:/static/,file:uploads/
+  spring_app:
+    build: .
+    image: rama
+    container_name: ${APP_CONTAINER_NAME:-bootmvc_app}
 
-# ===============================
-# Google OAuth2
-# ===============================
-spring.security.oauth2.client.registration.google.client-id=${GOOGLE_CLIENT_ID}
-spring.security.oauth2.client.registration.google.client-secret=${GOOGLE_CLIENT_SECRET}
-spring.security.oauth2.client.registration.google.scope=profile,email
-spring.security.oauth2.client.registration.google.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}
+    ports:
+      - "8081:8080"
 
-# ===============================
-# Security logging
-# ===============================
-logging.level.org.springframework.security=DEBUG
+    environment:
+
+      # LOCAL DOCKER MYSQL
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Tchandu@543
+
+      PORT: 8080
+
+      # Google OAuth2
+      GOOGLE_CLIENT_ID: ${YOUR_GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${YOUR_GOOGLE_CLIENT_SECRET}
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:
